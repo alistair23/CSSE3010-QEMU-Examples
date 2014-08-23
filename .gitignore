@@ -4,6 +4,7 @@
 *.obj
 *.elf
 *.dump
+*.bin
 
 # Libraries
 *.lib
