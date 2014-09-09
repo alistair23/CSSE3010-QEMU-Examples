@@ -41,7 +41,7 @@ int main(void) {
 		ADC_SoftwareStartConv(ADC1);	//Perform ADC conversions  	
 			
 		/* Wait for ADC conversion to finish by polling the ADC Over Flag. */
-		//while ((ADC_GetFlagStatus(ADC1, ADC_FLAG_OVR) != RESET) && (ADC_GetFlagStatus(ADC1, ADC_FLAG_OVR) != RESET)); 		
+		while ((ADC_GetFlagStatus(ADC1, ADC_FLAG_OVR) != RESET) && (ADC_GetFlagStatus(ADC1, ADC_FLAG_OVR) != RESET));
 
 		/* Extract ADC conversion values */
 		adc_value = ADC_GetConversionValue(ADC1);
@@ -50,8 +50,8 @@ int main(void) {
 		debug_printf("ADC Value: %x - CR1:%X CR2:%X JOFR_1:%X\n\r", adc_value, ADC1->CR1, ADC1->CR2, ADC1->JOFR1);
 		ADC_ClearFlag(ADC1, ADC_FLAG_OVR);
 
-		//NP2_LEDToggle();	//Toggle LED on/off
-		//Delay(0x7FFF00);	//Delay function
+		NP2_LEDToggle();	//Toggle LED on/off
+		Delay(0x7FFF00);	//Delay function
 		 
   	}
 }
