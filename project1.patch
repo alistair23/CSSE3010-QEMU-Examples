@@ -1,0 +1,102 @@
+diff --git a/project1/Makefile b/project1/Makefile
+old mode 100755
+new mode 100644
+index c8997f0..dfee3e7
+--- a/project1/Makefile
++++ b/project1/Makefile
+@@ -28,15 +28,17 @@ SRCS += $(USBOTG_PATH)/src/usb_dcd.c $(USBOTG_PATH)/src/usb_dcd_int.c $(USBOTG_P
+ 
+ ###################################################
+ 
+-CC=arm-none-eabi-gcc
+-OBJCOPY=arm-none-eabi-objcopy
++CROSS_COMPILE=arm-none-eabi-
++CC=$(CROSS_COMPILE)gcc
++OBJCOPY=$(CROSS_COMPILE)objcopy
++OBJDUMP=$(CROSS_COMPILE)objdump
+ 
+-CFLAGS  = -g -O1 -Wall -T$(NP2_PATH)/stm32_flash.ld -Wmaybe-uninitialized
+-CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m4 -mthumb-interwork -DUSE_STDPERIPH_DRIVER -DUSE_STM324xG_EVAL
+-CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
+-CFLAGS += -DENABLE_VCP
++CFLAGS  = -g -O0 -Wall -T$(NP2_PATH)/stm32_flash.ld -Wmaybe-uninitialized -DNO_FPU
++CFLAGS += -mlittle-endian -mthumb -mcpu=cortex-m3 -mthumb-interwork -DUSE_STDPERIPH_DRIVER -DUSE_STM324xG_EVAL
++#CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
++#CFLAGS += -DENABLE_VCP
+ 
+-LD_SYS_LIBS = -lstdc++ -lsupc++ -lm -lc -lgcc -lnosys
++LD_SYS_LIBS = -lm -lc -lgcc -lnosys
+ 
+ ###################################################
+ 
+@@ -69,6 +71,7 @@ $(PROJ_NAME).elf: $(SRCS)
+ 	$(CC) $(CFLAGS) $^ -o $@ -Llib $(LD_SYS_LIBS)
+ 	$(OBJCOPY) -O ihex $(PROJ_NAME).elf $(PROJ_NAME).hex
+ 	$(OBJCOPY) -O binary $(PROJ_NAME).elf $(PROJ_NAME).bin
++	$(OBJDUMP) -S $(PROJ_NAME).elf > $(PROJ_NAME).dump
+ 
+ prog:
+ 	sudo dfu-util -d 0483:df11 -c 1 -i 0 -a 0 -s 0x08000000 -D $(PROJ_NAME).bin
+@@ -96,3 +99,4 @@ clean:
+ 	rm -f $(PROJ_NAME).elf
+ 	rm -f $(PROJ_NAME).hex
+ 	rm -f $(PROJ_NAME).bin
++	rm -f $(PROJ_NAME).dump
+diff --git a/project1/main.c b/project1/main.c
+index 2b22f64..3e89e0a 100644
+--- a/project1/main.c
++++ b/project1/main.c
+@@ -37,7 +37,7 @@ uint8_t payload_full;		//1 when payload buffer is full
+ char last_char;				//Last character sent over laser
+ 
+ /* Private function prototypes -----------------------------------------------*/
+-uint8_t VCP_getchar(char* rx);
++//uint8_t VCP_getchar(char* rx);
+ void Hardware_init(void);
+ void Delay(__IO unsigned long nCount);
+ 
+@@ -49,6 +49,16 @@ void Handle_Radio_Receive(uint8_t packet_type, char* payload);
+ 
+ void Search_Diode(void);
+ 
++uint8_t VCP_getchar(char* rx)
++{
++    if (USART_GetFlagStatus(USART6, USART_FLAG_RXNE) == SET) {
++        *rx = USART_ReceiveData(USART6);
++        USART_ClearFlag(USART6, USART_FLAG_RXNE);
++        return 1;
++    }
++    return 0;
++}
++
+ /**
+   * @brief  Main program
+   * @param  None
+@@ -343,6 +353,8 @@ void Search_Diode(void) {
+   * @retval None
+   */
+ void Hardware_init(void) {
++	USART_InitTypeDef USART_debug;
++
+ 	NP2_LEDInit();
+ 	NP2_LEDOff();	
+ 
+@@ -351,6 +363,18 @@ void Hardware_init(void) {
+ 	Joystick_Init();
+ 	Laser_Init();
+ 
++    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART6, ENABLE);
++
++    USART_debug.USART_BaudRate = 4800;	//115200;
++    USART_debug.USART_WordLength = USART_WordLength_8b;
++    USART_debug.USART_StopBits = USART_StopBits_1;
++    USART_debug.USART_Parity = USART_Parity_No;
++    USART_debug.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
++    USART_debug.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
++
++    USART_Init(USART6, &USART_debug);
++    USART_Cmd(USART6, ENABLE);
++
+ 	nrf24l01plus_init();
+ 	nrf24l01plus_mode_rx();
+ 	radio_setup();
