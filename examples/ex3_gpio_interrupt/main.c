@@ -45,6 +45,8 @@ void main(void) {
   */
 void Hardware_init() {
 
+  debug_printf("Initialising\n");
+
 	GPIO_InitTypeDef  GPIO_InitStructure;
   	NVIC_InitTypeDef   NVIC_InitStructure;
 	EXTI_InitTypeDef   EXTI_InitStructure;
@@ -89,6 +91,8 @@ void Hardware_init() {
   * @retval None
   */
 void NP2_D0_EXTI_IRQ_HANDLER(void) {
+
+  debug_printf("Interrupt\n");
 
 	/* Check if D0 external interrupt has occured */
   	if (EXTI_GetITStatus(NP2_D0_EXTI_LINE) != RESET) {
