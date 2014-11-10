@@ -20,7 +20,7 @@ int main(void) {
 		/* Works */
 		while ((ADC_GetFlagStatus(ADC1, ADC_FLAG_OVR) != RESET) && (ADC_GetFlagStatus(ADC1, ADC_FLAG_OVR) != RESET));
 		/* Doesn't work */
-		while ((ADC_GetFlagStatus(ADC1, ADC_FLAG_OVR) != SET) && (ADC_GetFlagStatus(ADC1, ADC_FLAG_OVR) != SET));
+		//while ((ADC_GetFlagStatus(ADC1, ADC_FLAG_OVR) != SET) && (ADC_GetFlagStatus(ADC1, ADC_FLAG_OVR) != SET));
 
 		/* Extract ADC conversion values */
 		adc_value = ADC_GetConversionValue(ADC1);
