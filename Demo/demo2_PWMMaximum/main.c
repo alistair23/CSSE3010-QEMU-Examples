@@ -15,15 +15,15 @@ void main(void)    {
     Servo_Tilt_Init();
 
     while (1) {
-        debug_printf("Starting...\n");
+        debug_printf("--Starting...\n");
 
-        debug_printf("Setting Correct Values\n");
+        debug_printf("--Setting Correct Values\n");
         Servo_Pan_Set_Angle(40);
         Servo_Tilt_Set_Angle(60);
 
         Delay(0x7FFF00);    //Delay 1s.
 
-        debug_printf("Setting Incorrect Values\n");
+        debug_printf("--Setting Incorrect Values\n");
         Servo_Pan_Set_Angle(-90);
         Servo_Tilt_Set_Angle(100);
     }
