@@ -21,7 +21,7 @@ void main(void)    {
         Servo_Pan_Set_Angle(40);
         Servo_Tilt_Set_Angle(60);
 
-        Delay(0x300000);
+        Delay(0x7FFF00);    //Delay 1s.
 
         debug_printf("Setting Incorrect Values\n");
         Servo_Pan_Set_Angle(-90);
