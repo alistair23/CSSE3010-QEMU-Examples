@@ -63,18 +63,12 @@ void hardware_init() {
 	/* ADC Specific Init for 12Bit resolution and continuous sampling */
 	ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
 	ADC_InitStructure.ADC_ScanConvMode = DISABLE;
-
-	/* Works */
 	ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
-	/* Doesn't work */
-	//ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
-
 	ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
 	ADC_InitStructure.ADC_ExternalTrigConv = 0;
 	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
 	ADC_InitStructure.ADC_NbrOfConversion = 1;
 
-	/* Works */
 	ADC_Init(ADC1, &ADC_InitStructure);
 
 	/* Configure ADC1 to connect to the NP2 A0 channel */
