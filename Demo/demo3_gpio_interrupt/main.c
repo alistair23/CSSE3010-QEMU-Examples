@@ -67,8 +67,8 @@ void NP2_D0_EXTI_IRQ_HANDLER(void) {
     
         NP2_LEDToggle();
 
-        debug_printf("Triggered - %d\n\r", press_count);    //Print press count value
         press_count++;
+        debug_printf("Triggered - %d\n\r", press_count);    //Print press count value
 
         EXTI_ClearITPendingBit(NP2_D0_EXTI_LINE);
   	}
